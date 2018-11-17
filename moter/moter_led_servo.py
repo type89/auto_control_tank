@@ -24,6 +24,7 @@ GPIO.setup(LED, GPIO.OUT)
 gp_out = 26
 GPIO.setup(gp_out, GPIO.OUT)
 
+#HC-SR04
 TRIG_PORT = 4
 ECHO_PORT = 21
 GPIO.setup(TRIG_PORT, GPIO.OUT)
@@ -100,15 +101,14 @@ def led_off():
 
 def kubihuri():
     servo.ChangeDutyCycle(2.5)
-    time.sleep(0.5)
+    sleep(0.5)
     servo.ChangeDutyCycle(7.25)
-    time.sleep(0.5)
+    sleep(0.5)
     servo.ChangeDutyCycle(12)
-    time.sleep(0.5)
+    sleep(0.5)
     servo.ChangeDutyCycle(7.25)
-    time.sleep(0.5)
-
-servo.stop()
+    sleep(0.5)
+    return
 
 try:
     x=1
@@ -136,8 +136,6 @@ except KeyboardInterrupt:
 #except:
         #print("\nError : Exit")
 
-p0.stop()
-p1.stop()
-p2.stop()
-p3.stop()
+stop()
+servo.stop()
 GPIO.cleanup()
