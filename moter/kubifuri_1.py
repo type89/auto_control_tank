@@ -108,15 +108,21 @@ def led(led_flag):
         GPIO.output(LED, GPIO.LOW)
     return
 
-def kubihuri():
+def kubifuri():
     servo.ChangeDutyCycle(2.5)
     sleep(0.5)
+    right_cm = read_distance()
     servo.ChangeDutyCycle(7.25)
     sleep(0.5)
     servo.ChangeDutyCycle(12)
     sleep(0.5)
+    left_cm = read_distance()
     servo.ChangeDutyCycle(7.25)
     sleep(0.5)
+    if(right_cm > left_cm):
+        turn_right(0.8)
+    else:
+        turn_left(0.8)
     return
 
 
@@ -134,19 +140,14 @@ try:
             back(2.0)
            # turn_right(1.3)
             led(0)
-        if(cm < 30):
+        if(cm < 25):
             led(1)
             stop()
             back(1.0)
-            turn_right(0.8)
-            right_cm = read_distance()
-            turn_left(1.6)
-            left_cm = read_distance()
-            if(right_cm > left_cm):
-                turn_right(1.6)
+            stop()
+            kubifuri()
             led(0)
         forward()
-        sleep(0.05)
         #print( new_duty )
 
 except KeyboardInterrupt:
