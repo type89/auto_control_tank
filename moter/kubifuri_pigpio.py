@@ -1,0 +1,168 @@
+#!/usr/bin/python
+# coding: utf-8
+
+import RPi.GPIO as GPIO
+from time import time,sleep
+import sys
+import pigpio
+
+# GPIO 14,15番を使用
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(25, GPIO.OUT)
+GPIO.setup(24, GPIO.OUT)
+GPIO.setup(23, GPIO.OUT)
+GPIO.setup(22, GPIO.OUT)
+p0 = GPIO.PWM(25, 50)
+p1 = GPIO.PWM(24, 50)
+p2 = GPIO.PWM(23, 50)
+p3 = GPIO.PWM(22, 50)
+
+#LED
+LED = 17
+GPIO.setup(LED, GPIO.OUT)
+
+#GPIO26をサーボの制御パルスの出力に設定
+gp_out = 26
+servo = pigpio.pi()
+servo.set_mode(gp_out, pigpio.OUTPUT)
+
+
+
+#HC-SR04
+TRIG_PORT = 4
+ECHO_PORT = 21
+GPIO.setup(TRIG_PORT, GPIO.OUT)
+GPIO.setup(ECHO_PORT, GPIO.IN)
+
+# HC-SR04で距離を測定する --- (*2)
+def read_distance():
+    # トリガーで信号を送出
+    GPIO.output(TRIG_PORT, GPIO.LOW)
+    sleep(0.001)
+    # トリガーをHIGH→LOWに設定
+    GPIO.output(TRIG_PORT, GPIO.HIGH)
+    sleep(0.011)
+    GPIO.output(TRIG_PORT, GPIO.LOW)
+
+    # エコーに戻ってくる長さを調べる
+    sig_start = sig_end = 0
+    while GPIO.input(ECHO_PORT) == GPIO.LOW:
+      sig_start = time()
+      #print("sig_start = " + str(sig_start))
+    while GPIO.input(ECHO_PORT) == GPIO.HIGH:
+      sig_end = time()
+      #print("sig_end = " + str(sig_end))
+
+    # 経過時間が距離になっている --- (*3)
+    duration = sig_end - sig_start
+    distance = duration * 17000
+    return distance
+
+
+# 初期化
+p0.start(0)
+p1.start(0)
+p2.start(0)
+p3.start(0)
+#servo = GPIO.PWM(gp_out, 50)
+#servo.start(0)
+
+def stop():
+    p0.ChangeDutyCycle(0)
+    p1.ChangeDutyCycle(0)
+    p2.ChangeDutyCycle(0)
+    p3.ChangeDutyCycle(0)
+    return
+
+def forward():
+    p0.ChangeDutyCycle(60)
+    p1.ChangeDutyCycle(0)
+    p2.ChangeDutyCycle(65)
+    p3.ChangeDutyCycle(0)
+    return
+
+def back(keeptime):
+    p0.ChangeDutyCycle(0)
+    p1.ChangeDutyCycle(60)
+    p2.ChangeDutyCycle(0)
+    p3.ChangeDutyCycle(69)
+    sleep(keeptime)
+    return
+
+def turn_right(keeptime):
+    p0.ChangeDutyCycle(50)
+    p1.ChangeDutyCycle(0)
+    p2.ChangeDutyCycle(0)
+    p3.ChangeDutyCycle(69)
+    sleep(keeptime)
+    return
+
+def turn_left(keeptime):
+    p0.ChangeDutyCycle(0)
+    p1.ChangeDutyCycle(60)
+    p2.ChangeDutyCycle(69)
+    p3.ChangeDutyCycle(0)
+    sleep(keeptime)
+    return
+
+def led(led_flag):
+    if(led_flag ==1):
+        GPIO.output(LED, GPIO.HIGH)
+    else:
+        GPIO.output(LED, GPIO.LOW)
+    return
+
+def kubifuri():
+    #右90
+    servo.set_servo_pulsewidth(gp_out, 2350)
+    sleep(0.5)
+    left_cm = read_distance()
+    print("left_cm= " + str(left_cm))
+    servo.set_servo_pulsewidth(gp_out, 540)
+    sleep(0.5)
+    right_cm = read_distance()
+    print("rignt_cm= " + str(right_cm))
+    #ここで0
+    servo.set_servo_pulsewidth(gp_out, 1400)
+    sleep(0.5)
+    if(right_cm > left_cm):
+        turn_right(0.8)
+    else:
+        turn_left(0.8)
+    return
+
+try:
+    x=1
+    servo.set_servo_pulsewidth(gp_out, 1400)
+
+    while (x==1):
+        cm = read_distance()
+        print("distance=", cm)
+        sleep(0.1)
+        if(cm <= 0):
+            cm =100
+        if(cm < 12):
+            stop()
+            led(1)
+            back(2.0)
+           # turn_right(1.3)
+            led(0)
+        if(cm < 25):
+            led(1)
+            stop()
+            back(1.0)
+            stop()
+            kubifuri()
+            led(0)
+            cm = read_distance()
+        forward()
+        #print( new_duty )
+
+except KeyboardInterrupt:
+        print("\nCtrl + c : Exit")
+#except:
+        #print("\nError : Exit")
+
+stop()
+servo.stop()
+GPIO.cleanup()
