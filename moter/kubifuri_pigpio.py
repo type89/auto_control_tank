@@ -26,8 +26,6 @@ gp_out = 26
 servo = pigpio.pi()
 servo.set_mode(gp_out, pigpio.OUTPUT)
 
-
-
 #HC-SR04
 TRIG_PORT = 4
 ECHO_PORT = 21
@@ -64,8 +62,6 @@ p0.start(0)
 p1.start(0)
 p2.start(0)
 p3.start(0)
-#servo = GPIO.PWM(gp_out, 50)
-#servo.start(0)
 
 def stop():
     p0.ChangeDutyCycle(0)
@@ -85,22 +81,22 @@ def back(keeptime):
     p0.ChangeDutyCycle(0)
     p1.ChangeDutyCycle(60)
     p2.ChangeDutyCycle(0)
-    p3.ChangeDutyCycle(69)
+    p3.ChangeDutyCycle(65)
     sleep(keeptime)
     return
 
 def turn_right(keeptime):
-    p0.ChangeDutyCycle(50)
+    p0.ChangeDutyCycle(60)
     p1.ChangeDutyCycle(0)
     p2.ChangeDutyCycle(0)
-    p3.ChangeDutyCycle(69)
+    p3.ChangeDutyCycle(65)
     sleep(keeptime)
     return
 
 def turn_left(keeptime):
     p0.ChangeDutyCycle(0)
     p1.ChangeDutyCycle(60)
-    p2.ChangeDutyCycle(69)
+    p2.ChangeDutyCycle(65)
     p3.ChangeDutyCycle(0)
     sleep(keeptime)
     return
@@ -156,12 +152,9 @@ try:
             led(0)
             cm = read_distance()
         forward()
-        #print( new_duty )
 
 except KeyboardInterrupt:
         print("\nCtrl + c : Exit")
-#except:
-        #print("\nError : Exit")
 
 stop()
 servo.stop()
