@@ -79,24 +79,24 @@ def forward():
 
 def back(keeptime):
     p0.ChangeDutyCycle(0)
-    p1.ChangeDutyCycle(56)
+    p1.ChangeDutyCycle(60)
     p2.ChangeDutyCycle(0)
-    p3.ChangeDutyCycle(50)
+    p3.ChangeDutyCycle(69)
     sleep(keeptime)
     return
 
 def turn_right(keeptime):
-    p0.ChangeDutyCycle(56)
+    p0.ChangeDutyCycle(50)
     p1.ChangeDutyCycle(0)
     p2.ChangeDutyCycle(0)
-    p3.ChangeDutyCycle(50)
+    p3.ChangeDutyCycle(69)
     sleep(keeptime)
     return
 
 def turn_left(keeptime):
     p0.ChangeDutyCycle(0)
-    p1.ChangeDutyCycle(56)
-    p2.ChangeDutyCycle(50)
+    p1.ChangeDutyCycle(60)
+    p2.ChangeDutyCycle(69)
     p3.ChangeDutyCycle(0)
     sleep(keeptime)
     return
