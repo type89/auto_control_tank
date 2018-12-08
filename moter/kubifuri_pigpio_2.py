@@ -109,7 +109,7 @@ def led(led_flag):
     return
 
 def kubifuri():
-    #右90
+    #左90
     servo.set_servo_pulsewidth(gp_out, 2350)
     sleep(0.5)
     left_cm = read_distance()
@@ -129,7 +129,7 @@ def kubifuri():
 
 def kabe_check():
     servo.set_servo_pulsewidth(gp_out, 2350)
-    sleep(0.5)
+    sleep(0.3)
     left_cm = read_distance()
     print("left_cm= " + str(left_cm))
     servo.set_servo_pulsewidth(gp_out, 540)
@@ -138,7 +138,7 @@ def kabe_check():
     print("rignt_cm= " + str(right_cm))
     #ここで0
     servo.set_servo_pulsewidth(gp_out, 1400)
-    sleep(0.5)
+    sleep(0.3)
     if(right_cm < 25):
         turn_left(0.1)
     if(left_cm < 25):
@@ -160,7 +160,7 @@ try:
         if(cm < 12):
             stop()
             led(1)
-            back(2.0)
+            back(1.5)
            # turn_right(1.3)
             led(0)
         if(cm < 25):
@@ -172,7 +172,7 @@ try:
             led(0)
             cm = read_distance()
         forward()
-        sleep(0.5)
+        sleep(0.1)
         kabe_check()
         forward()
 
